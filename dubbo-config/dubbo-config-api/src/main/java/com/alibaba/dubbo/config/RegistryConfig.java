@@ -24,6 +24,8 @@ import java.util.Map;
 /**
  * RegistryConfig
  *
+ * 注册中心相关信息
+ *
  * @author william.liangf
  * @export
  */

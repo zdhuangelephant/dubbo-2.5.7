@@ -22,6 +22,9 @@ import java.io.Serializable;
 /**
  * @author chao.liuc
  * @export
+ *
+ * 方法参数配置
+ *
  */
 public class ArgumentConfig implements Serializable {
 

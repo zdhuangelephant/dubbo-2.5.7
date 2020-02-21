@@ -69,6 +69,7 @@ public class ExtensionLoader<T> {
 
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
 
+    // 存放由SPI标记的接口的容器
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<Class<?>, ExtensionLoader<?>>();
 
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<Class<?>, Object>();
@@ -103,6 +104,12 @@ public class ExtensionLoader<T> {
         return type.isAnnotationPresent(SPI.class);
     }
 
+    /**
+     * 得到加载器
+     * @param type  eg: Protocol/Cache/Cluster/Filter/...
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null)
@@ -294,7 +301,8 @@ public class ExtensionLoader<T> {
     /**
      * 返回指定名字的扩展。如果指定名字的扩展不存在，则抛异常 {@link IllegalStateException}.
      *
-     * @param name
+     * 即根据扩展名，获取具体实例值
+     * @param name  就是某个被SPI标记了的接口的某一个具体实现
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -515,6 +523,11 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * 注入属性
+     * @param instance
+     * @return
+     */
     private T injectExtension(T instance) {
         try {
             if (objectFactory != null) {
@@ -710,6 +723,10 @@ public class ExtensionLoader<T> {
         return extension.value();
     }
 
+    /**
+     *  getAdaptiveExtensionClass().newInstance() 创建了代理对象
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private T createAdaptiveExtension() {
         try {
@@ -719,17 +736,34 @@ public class ExtensionLoader<T> {
         }
     }
 
+    /**1、先使用getExtensionClasses()将本SPI涉及的所有实现类都加载初始化完成
+     * 2、再由createAdaptiveExtensionClass()生成代理对象
+     * 3、此代理对象被业务调用时，需要选择1中的一个具体接口的实现，把处理中转过去
+     * 4、此选择通过Invoker参数中URL信息来抉择，URL信息最终得出一个extName值（服务提供方的信息都在url中携带）
+     * 5、
+     *
+     * @return
+     */
     private Class<?> getAdaptiveExtensionClass() {
+        // 通过SPI加载接口延伸的所有实现到map中保存
         getExtensionClasses();
         if (cachedAdaptiveClass != null) {
             return cachedAdaptiveClass;
         }
+        // 动态生成接口的代理实现class对象
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
 
+    /**
+     * 生成的class仅仅是一个代理类
+     * @return
+     */
     private Class<?> createAdaptiveExtensionClass() {
+        // 动态创建class的代码 !!!!   程序员要失业了。连代码机器都可以自己实现了。危机感！
+        // 所生成的源码详见 dubbo-dubbo-2.5.7\dubbo-rpc\dubbo-rpc-default\src\test\java\com\alibaba\dubbo\rpc\protocol\dubbo\code_gen_by_extensionLoader
         String code = createAdaptiveExtensionClassCode();
         ClassLoader classLoader = findClassLoader();
+        // 编译生成的代码为class对象
         com.alibaba.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
         return compiler.compile(code, classLoader);
     }
@@ -738,6 +772,7 @@ public class ExtensionLoader<T> {
         StringBuilder codeBuidler = new StringBuilder();
         Method[] methods = type.getMethods();
         boolean hasAdaptiveAnnotation = false;
+        // 只创建被@Adaptive标记的方法
         for (Method m : methods) {
             if (m.isAnnotationPresent(Adaptive.class)) {
                 hasAdaptiveAnnotation = true;

@@ -28,6 +28,8 @@ import java.util.Map;
 /**
  * ApplicationConfig
  *
+ * 当前应用信息
+ *
  * @author william.liangf
  * @export
  */

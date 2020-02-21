@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * ProtocolConfig
  *
+ * 配置提供服务的协议信息，协议由提供方指定，消费方被动接受
+ *
  * @author william.liangf
  * @export
  */

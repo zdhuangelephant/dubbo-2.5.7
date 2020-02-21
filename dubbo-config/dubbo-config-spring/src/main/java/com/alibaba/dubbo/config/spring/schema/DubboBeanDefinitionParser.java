@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
 /**
  * AbstractBeanDefinitionParser
  *
+ * @see DubboNamespaceHandler
  * @author william.liangf
  * @export
  */

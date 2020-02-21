@@ -23,6 +23,8 @@ import java.util.List;
 /**
  * MethodConfig
  *
+ * 方法配置
+ *
  * @author william.liangf
  * @export
  */

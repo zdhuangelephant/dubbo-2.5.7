@@ -29,6 +29,8 @@ import java.util.Arrays;
 /**
  * ProviderConfig
  *
+ * 服务方缺省配置
+ *
  * @author william.liangf
  * @export
  * @see com.alibaba.dubbo.config.ProtocolConfig

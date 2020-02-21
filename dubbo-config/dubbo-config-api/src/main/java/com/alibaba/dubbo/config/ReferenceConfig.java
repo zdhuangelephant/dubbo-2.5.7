@@ -55,6 +55,8 @@ import static com.alibaba.dubbo.common.utils.NetUtils.isInvalidLocalHost;
 /**
  * ReferenceConfig
  *
+ * 引用服务配置，用于创建一个远程服务代理
+ *
  * @author william.liangf
  * @export
  */
@@ -62,10 +64,13 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
     private static final long serialVersionUID = -5864351140409987595L;
 
+    // Protocol的代理对象
     private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
 
+    // Cluster的代理对象
     private static final Cluster cluster = ExtensionLoader.getExtensionLoader(Cluster.class).getAdaptiveExtension();
 
+    // ProxyFactory的代理对象
     private static final ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
     private final List<URL> urls = new ArrayList<URL>();
     // 接口类型
@@ -386,7 +391,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                     throw new IllegalStateException("No such any registry to reference " + interfaceName + " on the consumer " + NetUtils.getLocalHost() + " use dubbo version " + Version.getVersion() + ", please config <dubbo:registry address=\"...\" /> to your spring config.");
                 }
             }
-
+            // 负载 -- 对应provider有多个
             if (urls.size() == 1) {
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {

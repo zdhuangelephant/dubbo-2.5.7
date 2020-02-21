@@ -27,6 +27,10 @@ import java.lang.annotation.Target;
  *
  * @author william.liangf
  * @export
+ *
+ * 两个作用:
+ *  1、注册服务到spring容器
+ *  2、暴露为RPC服务
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

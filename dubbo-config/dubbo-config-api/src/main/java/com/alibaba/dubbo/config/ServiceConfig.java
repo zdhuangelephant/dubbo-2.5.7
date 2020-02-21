@@ -60,6 +60,8 @@ import static com.alibaba.dubbo.common.utils.NetUtils.isInvalidPort;
 /**
  * ServiceConfig
  *
+ * 暴露一个服务，定义服务的元信息
+ *
  * @author william.liangf
  * @export
  */

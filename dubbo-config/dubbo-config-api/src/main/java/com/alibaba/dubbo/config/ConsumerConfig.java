@@ -18,6 +18,8 @@ package com.alibaba.dubbo.config;
 /**
  * ConsumerConfig
  *
+ * 消费方缺省配置
+ *
  * @author william.liangf
  * @export
  */
